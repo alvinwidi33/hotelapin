@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_apin/config/app_asset.dart';
-import 'package:hotel_apin/config/app_color.dart';
 import 'package:hotel_apin/config/app_route.dart';
 import 'package:hotel_apin/widget/button_custom.dart';
 
