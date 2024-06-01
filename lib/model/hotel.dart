@@ -7,7 +7,7 @@ class Hotel {
   String location;
   double rate;
   String description;
-  List<Map<dynamic,String>> activities;
+  List<Map<String, dynamic>> activities; 
   String category;
 
   Hotel({
@@ -32,7 +32,8 @@ class Hotel {
         location: json["location"],
         rate: json["rate"]?.toDouble(),
         description: json["description"],
-        activities: List<Map<dynamic, String>>.from(json["activities"]),
+        activities:
+            List<Map<String, dynamic>>.from(json["activities"]), 
         category: json["category"],
       );
 
