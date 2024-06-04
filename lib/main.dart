@@ -5,11 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hotel_apin/config/app_route.dart';
 import 'package:hotel_apin/config/session.dart';
 import 'package:hotel_apin/firebase_options.dart';
+import 'package:hotel_apin/page/detail_page.dart';
 import 'package:hotel_apin/page/home_page.dart';
 import 'package:hotel_apin/page/intro_page.dart';
 import 'package:hotel_apin/page/signin_page.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
 import 'config/app_color.dart';
 import 'model/user.dart';
 
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         AppRoute.intro: (context) => const IntroPage(),
         AppRoute.home: (context) => HomePage(),
         AppRoute.signin: (context) => SigninPage(),
-        AppRoute.detail: (context) => const IntroPage(),
+        AppRoute.detail: (context) => DetailPage(),
         AppRoute.checkout: (context) => const IntroPage(),
         AppRoute.checkooutSuccess: (context) => const IntroPage(),
         AppRoute.detailBooking: (context) => const IntroPage(),

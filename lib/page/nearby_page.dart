@@ -5,6 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:hotel_apin/config/app_asset.dart';
 import 'package:hotel_apin/config/app_color.dart';
+import 'package:hotel_apin/config/app_route.dart';
 import 'package:hotel_apin/controller/c_nearby.dart';
 import '../config/app_format.dart';
 import '../model/hotel.dart';
@@ -31,19 +32,21 @@ class NearbyPage extends StatelessWidget {
 
   GetBuilder<CNearby> hotels() {
     return GetBuilder<CNearby>(builder: (_) {
-        List<Hotel> list = _.category == 'All Places'
-            ? _.listHotel
-            : _.listHotel
-                .where((e) => e.category == cNearby.category)
-                .toList();
-        if (list.isEmpty) return const Center(child: Text("Empty"));
-        return ListView.builder(
-          itemCount: list.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            Hotel hotel = list[index];
-            return Container(
+      List<Hotel> list = _.category == 'All Places'
+          ? _.listHotel
+          : _.listHotel.where((e) => e.category == cNearby.category).toList();
+      if (list.isEmpty) return const Center(child: Text("Empty"));
+      return ListView.builder(
+        itemCount: list.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          Hotel hotel = list[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, AppRoute.detail, arguments: hotel);
+            },
+            child: Container(
               margin: EdgeInsets.fromLTRB(
                 index == 0 ? 20 : 20,
                 0,
@@ -51,7 +54,7 @@ class NearbyPage extends StatelessWidget {
                 0,
               ),
               decoration: BoxDecoration(
-                color:Colors.white,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -72,7 +75,7 @@ class NearbyPage extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, 
+                      horizontal: 16.0,
                       vertical: 12.0,
                     ),
                     child: Row(
@@ -122,9 +125,8 @@ class NearbyPage extends StatelessWidget {
                           allowHalfRating: true,
                           itemCount: 5,
                           itemBuilder: (context, _) => const Icon(
-                            Icons.star_rounded,
-                            color: AppColor.starActive
-                          ),
+                              Icons.star_rounded,
+                              color: AppColor.starActive),
                           itemSize: 18,
                           unratedColor: AppColor.starInActive,
                           onRatingUpdate: (rating) {},
@@ -135,10 +137,11 @@ class NearbyPage extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
-        );
-      });
+            ),
+          );
+        },
+      );
+    });
   }
 
   Padding header(BuildContext context) {

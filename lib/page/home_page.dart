@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:hotel_apin/config/app_color.dart';
 import 'package:hotel_apin/controller/c_home.dart';
 import 'package:hotel_apin/page/nearby_page.dart';
-
 import '../config/app_asset.dart';
 
 class HomePage extends StatelessWidget {
