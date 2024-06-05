@@ -263,7 +263,8 @@ GridView gridFacilities(facilities) {
             ],
           ),
         );
-      });
+      }
+    );
 }
 
 name(Hotel hotel, context) {
