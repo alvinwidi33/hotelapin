@@ -5,7 +5,7 @@ class Booking {
   String name;
   String location;
   String date;
-  String guest;
+  int guest;
   String breakfast;
   String checkInTime;
   int night;
@@ -69,3 +69,21 @@ class Booking {
         "is_done": isDone,
       };
 }
+
+Booking get initBooking => Booking(
+  id: '', 
+  idHotel: '', 
+  cover: '', 
+  name: '', 
+  location: '', 
+  date: '', 
+  guest: 0, 
+  breakfast: '', 
+  checkInTime: '', 
+  night: 0, 
+  serviceFee: 0, 
+  activities: 0, 
+  totelPayment: 0, 
+  status: '', 
+  isDone: false,
+  );

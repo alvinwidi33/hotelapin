@@ -4,15 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:hotel_apin/config/app_asset.dart';
 import 'package:hotel_apin/config/app_color.dart';
 import 'package:hotel_apin/config/app_format.dart';
+import 'package:hotel_apin/controller/c_user.dart';
+import 'package:hotel_apin/model/booking.dart';
+import 'package:hotel_apin/source/booking_source.dart';
 import 'package:hotel_apin/widget/button_custom.dart';
-
 import '../model/hotel.dart';
 
 class DetailPage extends StatelessWidget {
   DetailPage({super.key});
+
+  final cUser = Get.put(CUser());
+
+  final Rx<Booking> _bookedData = initBooking.obs;
+  Booking get bookedData => _bookedData.value;
+  set bookedData(Booking n) => _bookedData.value = n;
+
   final List facilities = [
     {
       'icon': AppAsset.iconCoffee,
@@ -34,6 +44,9 @@ class DetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Hotel hotel = ModalRoute.of(context)!.settings.arguments as Hotel;
+    BookingSource.checkIsBooked(cUser.data.id!, hotel.id).then((bookingValue) {
+      bookedData = bookingValue ?? initBooking;
+    });
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -48,41 +61,13 @@ class DetailPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color:Colors.white,
-          border: Border(
-            top:BorderSide(color:Colors.grey[100]!, width:1.5),
-          ),
-        ),
-        height: 80,
-        padding: const EdgeInsets.fromLTRB(16,12,16,8),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(AppFormat.currency(hotel.price.toDouble()),
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: AppColor.secondary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const Text(
-                  'per night',
-                  style:TextStyle(color:Colors.grey)
-                )
-                ],
-              ),
-            ),
-            ButtonCustom(
-              label: 'Book Now', 
-              onTap: (){},
-            ),
-          ],
-        ),
-      ),
+      //bottomNavigationBar: bookingNow(hotel, context),
+      bottomNavigationBar: Obx(() {
+        if (bookedData.id == '') {
+          return bookingNow(hotel, context);
+        }
+        return viewReceipt();
+      }),
       body: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -130,46 +115,124 @@ class DetailPage extends StatelessWidget {
       ),
     );
   }
-}
 
-SizedBox activities(Hotel hotel){
-    return SizedBox(
-      height: 105,
-      child: ListView.builder(
-          itemCount: hotel.activities.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            Map activity = hotel.activities[index];
-            return Padding(
-              padding: EdgeInsets.fromLTRB(
-                index == 0
-                    ? 16
-                    : 8, 
-                0,
-                index == hotel.images.length - 1 ? 16 : 8,
-                0,
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          activity['image'],
-                          width: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+  Container viewReceipt() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: Colors.grey[100]!, width: 1.5),
+        ),
+      ),
+      height: 80,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "You booked this.",
+            style: TextStyle(color: Colors.grey),
+          ),
+          Material(
+            color: AppColor.secondary,
+            borderRadius: BorderRadius.circular(20),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 36,
+                ),
+                child: const Text(
+                  "View Receipt",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
                   ),
-                  const SizedBox(height:6),
-                  Text(activity['name']),
-                  
-                ],
+                ),
               ),
-            );
-          }),
+            ),
+          ),
+        ],
+      ),
     );
   }
+
+  Container bookingNow(Hotel hotel, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: Colors.grey[100]!, width: 1.5),
+        ),
+      ),
+      height: 80,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppFormat.currency(hotel.price.toDouble()),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: AppColor.secondary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const Text('per night', style: TextStyle(color: Colors.grey))
+              ],
+            ),
+          ),
+          ButtonCustom(
+            label: 'Book Now',
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+SizedBox activities(Hotel hotel) {
+  return SizedBox(
+    height: 105,
+    child: ListView.builder(
+        itemCount: hotel.activities.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          Map activity = hotel.activities[index];
+          return Padding(
+            padding: EdgeInsets.fromLTRB(
+              index == 0 ? 16 : 8,
+              0,
+              index == hotel.images.length - 1 ? 16 : 8,
+              0,
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      activity['image'],
+                      width: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(activity['name']),
+              ],
+            ),
+          );
+        }),
+  );
+}
 
 GridView gridFacilities(facilities) {
   return GridView.builder(
@@ -252,9 +315,7 @@ SizedBox images(Hotel hotel) {
       itemBuilder: (context, index) {
         return Padding(
           padding: EdgeInsets.fromLTRB(
-            index == 0
-                ? 16
-                : 8, 
+            index == 0 ? 16 : 8,
             0,
             index == hotel.images.length - 1 ? 16 : 8,
             0,
