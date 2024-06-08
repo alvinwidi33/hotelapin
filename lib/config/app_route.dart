@@ -4,6 +4,6 @@ class AppRoute {
   static const signin = '/signin';
   static const detail = '/detail';
   static const checkout = '/checkout';
-  static const checkooutSuccess = '/checkout_success';
+  static const checkoutSuccess = '/checkout_success';
   static const detailBooking = '/detail_booking';
 }

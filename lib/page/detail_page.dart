@@ -12,6 +12,7 @@ import 'package:hotel_apin/controller/c_user.dart';
 import 'package:hotel_apin/model/booking.dart';
 import 'package:hotel_apin/source/booking_source.dart';
 import 'package:hotel_apin/widget/button_custom.dart';
+import '../config/app_route.dart';
 import '../model/hotel.dart';
 
 class DetailPage extends StatelessWidget {
@@ -61,7 +62,6 @@ class DetailPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      //bottomNavigationBar: bookingNow(hotel, context),
       bottomNavigationBar: Obx(() {
         if (bookedData.id == '') {
           return bookingNow(hotel, context);
@@ -94,7 +94,7 @@ class DetailPage extends StatelessWidget {
                 'Facilities',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontWeight: FontWeight.bold,
-                    ),
+                ),
               ),
             ),
             gridFacilities(facilities),
@@ -190,7 +190,9 @@ class DetailPage extends StatelessWidget {
           ),
           ButtonCustom(
             label: 'Book Now',
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, AppRoute.checkout, arguments: hotel);
+            },
           ),
         ],
       ),
@@ -263,8 +265,7 @@ GridView gridFacilities(facilities) {
             ],
           ),
         );
-      }
-    );
+      });
 }
 
 name(Hotel hotel, context) {
