@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:hotel_apin/config/app_asset.dart';
 import 'package:hotel_apin/config/app_color.dart';
 import 'package:hotel_apin/config/app_route.dart';
+import 'package:hotel_apin/config/session.dart';
 import 'package:hotel_apin/controller/c_nearby.dart';
 import '../config/app_format.dart';
 import '../model/hotel.dart';
@@ -22,7 +23,7 @@ class NearbyPage extends StatelessWidget {
           const SizedBox(height: 24),
           header(context),
           const SizedBox(height: 20),
-          SearchField(),
+          searchField(),
           const SizedBox(height: 30),
           categories(cNearby),
           const SizedBox(height: 30),
@@ -35,8 +36,10 @@ class NearbyPage extends StatelessWidget {
   GetBuilder<CNearby> hotels() {
     return GetBuilder<CNearby>(builder: (_) {
       List<Hotel> list = _.category == 'All Places'
-          ? _.listHotel
-          : _.listHotel.where((e) => e.category == cNearby.category).toList();
+          ? _.filteredHotels
+          : _.filteredHotels
+              .where((e) => e.category == cNearby.category)
+              .toList();
       if (list.isEmpty) return const Center(child: Text("Empty"));
       return ListView.builder(
         itemCount: list.length,
@@ -58,16 +61,33 @@ class NearbyPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                        child: AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: Image.network(
-                            hotel.cover,
-                            fit: BoxFit.cover,
+                      GestureDetector(
+                        onTap: () {
+                          showMenu(
+                              context: context,
+                              position: RelativeRect.fromLTRB(16, 16, 0, 0),
+                              items: [
+                                const PopupMenuItem(value: 'logout', child:Text('Logout')),
+                              ],
+                            ).then((value) {
+                            if (value == 'logout') {
+                              Session.clearUser();
+                              Navigator.pushReplacementNamed(
+                                  context, AppRoute.intro);
+                            }
+                          });
+                        },
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Image.network(
+                              hotel.cover,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -170,13 +190,12 @@ class NearbyPage extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                     ),
               ),
-              Obx((){
-                  return Text(
-                    '${cNearby.listHotel.length} Hotels',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  );
-                }
-              ),
+              Obx(() {
+                return Text(
+                  '${cNearby.listHotel.length} Hotels',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                );
+              }),
             ],
           ),
         ],
@@ -230,58 +249,61 @@ class NearbyPage extends StatelessWidget {
       );
     });
   }
-}
 
-Container SearchField() {
-  return Container(
-    height: 45,
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Stack(
-      children: [
-        Container(
-          height: 45,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: Colors.white,
-          ),
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-              isDense: true,
-              hintText: "Search by name or city",
-              hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
+  Container searchField() {
+    return Container(
+      height: 45,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Stack(
+        children: [
+          Container(
+            height: 45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.white,
+            ),
+            child: TextField(
+              onChanged: (value) {
+                cNearby.searchText = value;
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                isDense: true,
+                hintText: "Search by name or city",
+                hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
               ),
             ),
           ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Material(
-            color: AppColor.secondary,
-            borderRadius: BorderRadius.circular(45),
-            child: InkWell(
-              onTap: () {},
+          Align(
+            alignment: Alignment.centerRight,
+            child: Material(
+              color: AppColor.secondary,
               borderRadius: BorderRadius.circular(45),
-              child: const SizedBox(
-                height: 45,
-                width: 45,
-                child: Center(
-                  child: ImageIcon(
-                    AssetImage(AppAsset.iconSearch),
-                    color: Colors.white,
+              child: InkWell(
+                onTap: () {},
+                borderRadius: BorderRadius.circular(45),
+                child: const SizedBox(
+                  height: 45,
+                  width: 45,
+                  child: Center(
+                    child: ImageIcon(
+                      AssetImage(AppAsset.iconSearch),
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

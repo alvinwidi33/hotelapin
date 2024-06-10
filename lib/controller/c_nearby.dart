@@ -18,9 +18,28 @@ class CNearby extends GetxController {
 
   final _listHotel = <Hotel>[].obs;
   List<Hotel> get listHotel => _listHotel.toList();
-  getListHotel() async {
-    _listHotel.value = await HotelSurce.getHotel();
+
+  final _searchText = ''.obs;
+  String get searchText => _searchText.value;
+  set searchText(String value) {
+    _searchText.value = value;
     update();
+  }
+
+  getListHotel() async {
+    _listHotel.value = await HotelSource.getHotel();
+    update();
+  }
+
+  List<Hotel> get filteredHotels {
+    if (searchText.isEmpty) {
+      return listHotel;
+    } else {
+      return listHotel.where((hotel) {
+        return hotel.name.toLowerCase().contains(searchText.toLowerCase()) ||
+            hotel.location.toLowerCase().contains(searchText.toLowerCase());
+      }).toList();
+    }
   }
 
   @override
