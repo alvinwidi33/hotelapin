@@ -19,11 +19,20 @@ class BookingSource {
 
   static Future<bool> addBooking(String userId, Booking booking) async {
     var ref = FirebaseFirestore.instance
-      .collection('User')
-      .doc(userId)
-      .collection("Booking");
+        .collection('User')
+        .doc(userId)
+        .collection("Booking");
     var docRef = await ref.add(booking.toJson());
     docRef.update({'id': docRef.id});
     return true;
+  }
+
+  static Future<List<Booking>> getHistory(String id) async {
+    var result = await FirebaseFirestore.instance
+        .collection('User')
+        .doc(id)
+        .collection('Booking')
+        .get();
+    return result.docs.map((e) => Booking.fromJson(e.data())).toList();
   }
 }
