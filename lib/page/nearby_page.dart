@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:hotel_apin/config/app_asset.dart';
 import 'package:hotel_apin/config/app_color.dart';
 import 'package:hotel_apin/config/app_route.dart';
-import 'package:hotel_apin/config/session.dart';
 import 'package:hotel_apin/controller/c_nearby.dart';
 import '../config/app_format.dart';
+import '../config/session.dart';
 import '../model/hotel.dart';
 
 class NearbyPage extends StatelessWidget {
@@ -61,33 +61,16 @@ class NearbyPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          showMenu(
-                              context: context,
-                              position: RelativeRect.fromLTRB(16, 16, 0, 0),
-                              items: [
-                                const PopupMenuItem(value: 'logout', child:Text('Logout')),
-                              ],
-                            ).then((value) {
-                            if (value == 'logout') {
-                              Session.clearUser();
-                              Navigator.pushReplacementNamed(
-                                  context, AppRoute.intro);
-                            }
-                          });
-                        },
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                          child: AspectRatio(
-                            aspectRatio: 16 / 9,
-                            child: Image.network(
-                              hotel.cover,
-                              fit: BoxFit.cover,
-                            ),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Image.network(
+                            hotel.cover,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -172,13 +155,28 @@ class NearbyPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Image.asset(
-              AppAsset.profile,
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
+          GestureDetector(
+            onTap: () {
+              showMenu(
+                  context: context,
+                  position: const RelativeRect.fromLTRB(16, 16, 0, 0),
+                  items: [
+                    const PopupMenuItem(child: Text('Logout'), value: 'logout'),
+                  ]).then((value) {
+                if (value == 'logout') {
+                  Session.clearUser();
+                  Navigator.pushReplacementNamed(context, AppRoute.intro);
+                }
+              });
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.asset(
+                AppAsset.profile,
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Column(
