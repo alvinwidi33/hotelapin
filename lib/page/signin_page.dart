@@ -20,8 +20,9 @@ class SigninPage extends StatelessWidget {
           DInfo.dialogSuccess(
               context, response['message']); // Only two arguments
           DInfo.closeDialog(context); // Provide context as the parameter
-          Navigator.pushReplacementNamed(
-              context, AppRoute.home); // Navigate after closing the dialog
+          Future.delayed(Duration(milliseconds: 300), () {
+            Navigator.pushReplacementNamed(context, AppRoute.home);
+          }); // Navigate after closing the dialog
         } else {
           DInfo.toastError(response['message']);
         }

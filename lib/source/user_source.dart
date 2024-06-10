@@ -11,7 +11,7 @@ class UserSource {
       final credential = await auth.FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       response['success'] = true;
-      response['message'] = "Sign In Succes";
+      response['message'] = "Sign In Success";
       String uid = credential.user!.uid;
       User user = await getWhereId(uid);
       Session.saveUser(user);
